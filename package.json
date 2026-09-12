@@ -2,11 +2,13 @@
   "name": "neon-arcade",
   "version": "1.0.0",
   "scripts": {
-    "test": "node --test tests/",
+    "test": "node --test tests/*.test.js",
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
     "smoke": "node scripts/smoke-all.mjs",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:integration": "node --test tests/hub.test.js tests/client.test.js",
+    "test:unit": "node --test tests/snake.test.js tests/breakout.test.js tests/memory.test.js tests/g2048.test.js tests/bots.test.js"
   },
   "keywords": [
     "games",
