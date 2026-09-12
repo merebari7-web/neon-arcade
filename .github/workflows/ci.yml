@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
+      # both legs must report; a failure in one should not cancel the other mid-install
+      fail-fast: false
       matrix:
         node: ['20', '22']
     name: node ${{ matrix.node }}
