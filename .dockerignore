@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+data
+.smoke-data
+.git
+.github
+tests
+scripts
+README.md
+Dockerfile
+.dockerignore
+render.yaml
+railway.json

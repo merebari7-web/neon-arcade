@@ -1,0 +1,19 @@
+# Render blueprint - free "web service" tier works.
+# One click deploy: connect the GitHub repo and Render reads this file.
+services:
+  - type: web
+    name: neon-arcade
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Persist the leaderboard across deploys by pointing DATA_DIR at a disk path
+      # (Render free disk is ephemeral - the board simply starts fresh without it).
+      - key: DATA_DIR
+        value: /var/tmp/neon-arcade

@@ -1,0 +1,44 @@
+{
+  "name": "neon-arcade",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test tests/",
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "smoke": "node scripts/smoke-all.mjs",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "games",
+    "multiplayer",
+    "websocket",
+    "arcade",
+    "snake",
+    "2048"
+  ],
+  "author": "merebari7-web",
+  "license": "MIT",
+  "description": "Neon Arcade - 4-player online multiplayer arcade (Snake Battle, Breakout Duel, Memory Match, 2048 Versus)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "globals": "^17.12.0",
+    "jsdom": "^29.1.1"
+  },
+  "overrides": {
+    "qs": "^6.16.0"
+  },
+  "main": "server/index.js",
+  "repository": {
+    "url": "git+https://github.com/merebari7-web/neon-arcade.git",
+    "directory": "."
+  },
+  "homepage": "https://merebari7-web.github.io/neon-arcade/"
+}

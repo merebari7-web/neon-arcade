@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>NEON ARCADE — cabinet</title>
+<meta name="description" content="Play a cabinet in the Neon Arcade: online multiplayer rooms or solo against CPUs." />
+<meta name="theme-color" content="#05030c" />
+<meta name="robots" content="noindex" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2305030c'/%3E%3Cpath d='M7 20h6l2-8 3 8h7' fill='none' stroke='%2322e6ff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./css/neon.css" />
+</head>
+<body class="play">
+<header class="top">
+  <div class="wrap stage-bar">
+    <a class="logo" href="./" title="back to the lobby">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 22h5l3-12 3 12h7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="gameName">CABINET</span>
+    </a>
+    <span class="pill" id="roomPill"><span class="dot"></span> <b id="roomCode">–</b></span>
+    <span class="pill" id="connPill"><span class="dot"></span> connecting</span>
+    <span class="pill hidden" id="fpsPill"><span class="dot"></span> – fps</span>
+    <span class="grow" style="margin-left:auto"></span>
+    <button class="btn sm ghost" id="btnCpu" type="button">add cpu</button>
+    <button class="btn sm ghost" id="btnRestart" type="button">restart</button>
+    <button class="btn sm ghost" id="btnFull" type="button">fullscreen</button>
+    <a class="btn sm mg" href="./">exit</a>
+  </div>
+</header>
+
+<main class="wrap stage">
+  <div class="stage-main">
+    <div class="hud" id="hud">
+      <div class="cell" data-for="score"><span>score</span><b id="hudScore">0</b></div>
+      <div class="cell mg" data-for="rank"><span>rank</span><b id="hudRank">–</b></div>
+      <div class="cell" data-for="lives"><span>lives</span><b id="hudLives">–</b></div>
+      <div class="cell" data-for="bricks"><span>wall left</span><b id="hudBricks">–</b></div>
+      <div class="cell" data-for="pairs"><span>pairs</span><b id="hudPairs">–</b></div>
+      <div class="cell mg" data-for="tiles"><span>biggest tile</span><b id="hudTiles">–</b></div>
+      <div class="cell" data-for="best"><span>personal best</span><b id="hudBest">–</b></div>
+      <div class="cell" data-for="clock"><span>turn clock</span><div id="hudClock"></div></div>
+      <div class="cell" data-for="time"><span>time left</span><b id="hudTime">–</b></div>
+      <div class="plist" id="roster" style="margin-left:auto"></div>
+    </div>
+    <div class="arena" id="arena">
+      <div class="touch-pad" id="touchPad"></div>
+    </div>
+    <p class="tiny muted" id="hint" style="margin-top:10px"></p>
+  </div>
+
+  <aside class="dock">
+    <div class="panel">
+      <h2>Room chat <span class="grow"></span><span class="tiny muted" id="chatState">offline</span></h2>
+      <div class="chat">
+        <div class="chat-log" id="chatLog" aria-live="polite"></div>
+        <form id="chatForm" autocomplete="off">
+          <input id="chatText" type="text" maxlength="140" placeholder="say something" />
+          <button class="btn sm" type="submit">send</button>
+        </form>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>High scores <span class="grow"></span><span class="tiny muted" id="boardNote">this cabinet</span></h2>
+      <div class="panel-b" id="board"></div>
+    </div>
+    <div class="panel help">
+      <h2>How to play</h2>
+      <div class="panel-b" id="help"></div>
+    </div>
+  </aside>
+</main>
+
+<script type="module" src="./js/play.js"></script>
+</body>
+</html>

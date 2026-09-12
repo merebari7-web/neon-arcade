@@ -1,0 +1,20 @@
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# runtime state (leaderboard json is written next to the process)
+data/
+*.local
+.smoke-data/
+
+# os / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# env
+.env
+.env.*
+!.env.example

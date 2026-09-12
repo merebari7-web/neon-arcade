@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NEON ARCADE — free online multiplayer: Snake Battle, Breakout Duel, Memory Match, 2048 Versus</title>
+<meta name="description" content="A four-cabinet online arcade. Share a room code and play Snake Battle, Breakout Duel, Memory Match or 2048 Versus against friends or CPUs. No install, no account." />
+<meta name="theme-color" content="#05030c" />
+<meta property="og:title" content="NEON ARCADE — online multiplayer in your browser" />
+<meta property="og:description" content="Four neon cabinets, room codes, live leaderboards, CPU rivals when nobody is online." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2305030c'/%3E%3Cpath d='M7 20h6l2-8 3 8h7' fill='none' stroke='%2322e6ff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='24' r='2' fill='%23ff2bd1'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="./css/neon.css" />
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="logo" href="./">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 22h5l3-12 3 12h7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>NEON<b>ARCADE</b></span>
+    </a>
+    <nav>
+      <a href="#games">Cabinets</a>
+      <a href="#lobby">Open rooms</a>
+      <a href="#leaderboard">High scores</a>
+      <a href="#hosting">Hosting &amp; code</a>
+    </nav>
+    <div class="name-box">
+      <label class="tiny muted" for="name">tag</label>
+      <input id="name" type="text" maxlength="18" placeholder="Guest" autocomplete="off" spellcheck="false" />
+      <button id="sound" class="btn ghost sm" type="button" aria-pressed="false">♪ sound off</button>
+    </div>
+  </div>
+</header>
+
+<div class="marquee" aria-hidden="true"><div id="marquee"></div></div>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Insert coin.<br /><span>Play the arcade<br />with humans.</span></h1>
+      <p class="lead">Four cabinets, one room code. Battle live in Snake, duel in Breakout, out-remember someone in Memory, or race a stranger to 2048. Nobody online? The CPUs are mean enough to matter.</p>
+      <div class="hero-cta">
+        <a class="btn lg gr" href="./play.html?game=snake&amp;quick=1">▶ Quick play · Snake Battle</a>
+        <a class="btn lg" href="./play.html?mode=solo&amp;game=g2048">Solo cabinet</a>
+        <button class="btn lg ghost" id="rollId" type="button">Feeling lucky</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b class="mono" id="stOnline">–</b><span class="tiny muted">players online</span></div>
+        <div class="stat"><b id="stRooms">–</b><span class="tiny muted">rooms open</span></div>
+        <div class="stat"><b id="stMatches">–</b><span class="tiny muted">matches played</span></div>
+        <div class="stat"><b id="stBest">–</b><span class="tiny muted">your best 2048</span></div>
+      </div>
+      <p class="tiny muted" id="serverNote">connecting to the arcade server…</p>
+    </div>
+    <div class="cabinet">
+      <div id="attract" aria-hidden="true"></div>
+      <div class="cab-tag"><span class="pill live"><span class="dot"></span> attract mode</span><span>4 CPU snakes · real engine</span></div>
+    </div>
+  </section>
+
+  <section id="games">
+    <div class="sec-h">
+      <h2>The four cabinets</h2>
+      <span class="grow"></span>
+      <span class="pill"><span class="dot"></span> <b>1–8 players</b>&nbsp;per room</span>
+    </div>
+    <div class="games">
+      <div class="tile" style="--c:var(--cy)">
+        <div class="tile-art">
+          <svg viewBox="0 0 320 160" preserveAspectRatio="none" aria-hidden="true">
+            <path id="snakePath" fill="none" stroke="#22e6ff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26 18" d="M20 120h60l20-40h60l20 40h60l20-40h40">
+              <animate attributeName="stroke-dashoffset" from="0" to="-88" dur="1.4s" repeatCount="indefinite"/>
+            </path>
+            <circle cx="288" cy="52" r="7" fill="#7cff5a"><animate attributeName="opacity" values="1;.35;1" dur="1s" repeatCount="indefinite"/></circle>
+            <circle cx="40" cy="52" r="5" fill="#ffe600"/>
+          </svg>
+        </div>
+        <span class="badge">1–8 players</span>
+        <div class="tile-b">
+          <h3>Snake Battle</h3>
+          <p>Grow, cut rivals off, and turn their corpses into walls. Kill credit matters more than pellets.</p>
+          <div class="row">
+            <a class="btn gr" href="./play.html?game=snake&amp;quick=1">Quick play</a>
+            <a class="btn ghost" href="./play.html?game=snake&amp;mode=solo">Solo vs CPU</a>
+            <a class="btn ghost" href="./play.html?game=snake&amp;new=1">Open arena</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile" style="--c:var(--mg)">
+        <div class="tile-art">
+          <svg viewBox="0 0 320 160" preserveAspectRatio="none" aria-hidden="true">
+            <g fill="none" stroke="#ff2bd1" stroke-width="7">
+              <rect x="34" y="30" width="48" height="18" rx="4"/><rect x="92" y="30" width="48" height="18" rx="4" stroke="#22e6ff"/>
+              <rect x="150" y="30" width="48" height="18" rx="4"/><rect x="208" y="30" width="48" height="18" rx="4" stroke="#22e6ff"/>
+              <rect x="34" y="112" width="48" height="18" rx="4" stroke="#22e6ff"/><rect x="92" y="112" width="48" height="18" rx="4"/>
+              <rect x="150" y="112" width="48" height="18" rx="4" stroke="#22e6ff"/><rect x="208" y="112" width="48" height="18" rx="4"/>
+            </g>
+            <circle cx="120" cy="80" r="8" fill="#eafcff"><animate attributeName="cx" values="60;240;60" dur="3.2s" repeatCount="indefinite"/><animate attributeName="cy" values="80;80;80" dur="3.2s" repeatCount="indefinite"/></circle>
+            <rect x="60" y="74" width="52" height="8" rx="4" fill="#22e6ff"><animate attributeName="x" values="40;150;40" dur="3.2s" repeatCount="indefinite"/></rect>
+            <rect x="200" y="78" width="52" height="8" rx="4" fill="#ff2bd1"><animate attributeName="x" values="210;110;210" dur="3.2s" repeatCount="indefinite"/></rect>
+          </svg>
+        </div>
+        <span class="badge">1v1</span>
+        <div class="tile-b">
+          <h3>Breakout Duel</h3>
+          <p>One ball, two halves. You only break your own wall, so keep the rally alive and chip away.</p>
+          <div class="row">
+            <a class="btn mg" href="./play.html?game=breakout&amp;quick=1">Quick play</a>
+            <a class="btn ghost" href="./play.html?game=breakout&amp;mode=solo">Solo vs CPU</a>
+            <a class="btn ghost" href="./play.html?game=breakout&amp;new=1">Open duel</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile" style="--c:var(--yl)">
+        <div class="tile-art">
+          <svg viewBox="0 0 320 160" aria-hidden="true">
+            <g fill="none" stroke="#ffe600" stroke-width="3">
+              <rect x="46" y="34" width="52" height="52" rx="9"/><rect x="108" y="34" width="52" height="52" rx="9"/>
+              <rect x="170" y="34" width="52" height="52" rx="9" stroke="#ff2bd1"/><rect x="232" y="34" width="52" height="52" rx="9"/>
+              <rect x="46" y="96" width="52" height="52" rx="9"/><rect x="108" y="96" width="52" height="52" rx="9" stroke="#7cff5a"/>
+              <rect x="170" y="96" width="52" height="52" rx="9"/><rect x="232" y="96" width="52" height="52" rx="9"/>
+            </g>
+            <text x="196" y="70" font-size="26" fill="#ff2bd1" text-anchor="middle" font-family="monospace">✦</text>
+            <text x="134" y="132" font-size="26" fill="#7cff5a" text-anchor="middle" font-family="monospace">✦</text>
+            <animateTransform attributeName="transform" type="translate" values="0 0;0 -3;0 0" dur="2.4s" repeatCount="indefinite"/>
+          </svg>
+        </div>
+        <span class="badge">1v1 turn-based</span>
+        <div class="tile-b">
+          <h3>Memory Match</h3>
+          <p>Match a pair and the turn stays yours. Stacks pay, dangling tiles forfeit the turn.</p>
+          <div class="row">
+            <a class="btn yl" href="./play.html?game=memory&amp;quick=1">Quick play</a>
+            <a class="btn ghost" href="./play.html?game=memory&amp;mode=solo">Solo vs CPU</a>
+            <a class="btn ghost" href="./play.html?game=memory&amp;new=1">Open table</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile" style="--c:var(--gr)">
+        <div class="tile-art">
+          <svg viewBox="0 0 320 160" aria-hidden="true">
+            <g font-family="monospace" font-weight="700" text-anchor="middle">
+              <rect x="42" y="30" width="54" height="44" rx="9" fill="#14192e"/><text x="69" y="60" fill="#d9f2ff" font-size="20">2</text>
+              <rect x="106" y="30" width="54" height="44" rx="9" fill="#22e6ff"/><text x="133" y="60" fill="#05222b" font-size="20">8</text>
+              <rect x="170" y="30" width="54" height="44" rx="9" fill="#ff2bd1"/><text x="197" y="60" fill="#2a0524" font-size="18">16</text>
+              <rect x="234" y="30" width="54" height="44" rx="9" fill="#ffe600"/><text x="261" y="60" fill="#29210a" font-size="18">64</text>
+              <rect x="42" y="86" width="54" height="44" rx="9" fill="#7cff5a"/><text x="69" y="116" fill="#05270f" font-size="18">32</text>
+              <rect x="106" y="86" width="54" height="44" rx="9" fill="#ff8a3d"/><text x="133" y="116" fill="#2b1205" font-size="16">128</text>
+              <rect x="170" y="86" width="54" height="44" rx="9" fill="#fff"/><text x="197" y="116" fill="#000" font-size="14">2048</text>
+              <rect x="234" y="86" width="54" height="44" rx="9" fill="#17253c"/>
+            </g>
+            <animate attributeName="opacity" values="1;.72;1" dur="2.8s" repeatCount="indefinite"/>
+          </svg>
+        </div>
+        <span class="badge">1v1 race</span>
+        <div class="tile-b">
+          <h3>2048 Versus</h3>
+          <p>Side-by-side boards with a live view of your rival. First 2048 wins, otherwise highest score.</p>
+          <div class="row">
+            <a class="btn gr" href="./play.html?game=g2048&amp;quick=1">Quick play</a>
+            <a class="btn ghost" href="./play.html?game=g2048&amp;mode=solo">Solo grind</a>
+            <a class="btn ghost" href="./play.html?game=g2048&amp;new=1">Open race</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lobby">
+    <div class="split">
+      <div class="panel">
+        <h2><span class="pill live"><span class="dot"></span> live</span> Open rooms <span class="grow"></span>
+          <button class="btn ghost sm" id="refreshRooms" type="button">refresh</button>
+        </h2>
+        <div class="panel-b">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+            <div class="seg" id="roomFilter" role="group" aria-label="filter by game">
+              <button type="button" data-game="" aria-pressed="true">all</button>
+              <button type="button" data-game="snake">snake</button>
+              <button type="button" data-game="breakout">breakout</button>
+              <button type="button" data-game="memory">memory</button>
+              <button type="button" data-game="g2048">2048</button>
+            </div>
+            <form id="joinForm" style="display:flex;gap:6px;margin-left:auto">
+              <input id="joinCode" type="text" maxlength="5" placeholder="CODE" autocomplete="off" spellcheck="false" style="width:96px;text-transform:uppercase;letter-spacing:.2em" />
+              <button class="btn sm" type="submit">join</button>
+            </form>
+          </div>
+          <p class="tiny muted" id="roomsHint" style="margin:-2px 0 10px">looking for open rooms…</p>
+          <div class="rooms" id="roomList"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>How the arcade works</h2>
+        <div class="panel-b">
+          <ol class="howto">
+            <li><b>Pick a cabinet</b>, then <b>Open room</b>. You get a 5-letter code.</li>
+            <li><b>Send the code</b> to whoever you want to beat. They choose <b>join by code</b>. Up to 8 in Snake, 1v1 elsewhere.</li>
+            <li><b>Nothing to wait for:</b> the room starts with a CPU rival the moment you hit start, and rounds auto-restart after each result.</li>
+            <li><b>Leaderboards</b> are server-side per game; solo scores are saved in your browser.</li>
+            <li><b>No server? No problem.</b> Solo cabinets run the identical rules engine locally in your tab.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="leaderboard">
+    <div class="panel">
+      <h2>High scores <span class="grow"></span><span class="tiny muted" id="boardNote">server-side, per game</span></h2>
+      <div class="panel-b" id="board"></div>
+    </div>
+  </section>
+
+  <section id="hosting">
+    <div class="panel">
+      <h2>Self-hosting this arcade</h2>
+      <div class="panel-b split" style="align-items:start">
+        <div>
+          <p class="muted" style="margin-top:0">Everything here is plain Node + vanilla JS. Two commands and you have your own arcade with live rooms:</p>
+<pre style="background:#08061a;border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;margin:0"><code>npm install
+npm start        # then open http://localhost:3000</code></pre>
+          <p class="muted tiny" style="margin-top:12px">Deploy anywhere that runs Node and allows WebSockets (Render, Railway, Fly.io — configs are in the repo). The four solo cabinets also work as a pure static site on GitHub Pages, because the rules engine ships with the client.</p>
+        </div>
+        <div>
+          <p class="tiny muted" style="margin-top:0">Repo layout</p>
+<pre style="background:#08061a;border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;margin:0"><code>server/    hub, rooms, leaderboard
+public/    lobby + 4 cabinets
+public/shared/  game rules (both sides)</code></pre>
+          <p style="margin-top:12px"><a class="btn ghost sm" id="repoLink" href="https://github.com/merebari7-web/neon-arcade" target="_blank" rel="noopener">view source on GitHub ↗</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <span class="pill"><span class="dot"></span> <b id="footOnline">–</b>&nbsp;in the arcade</span>
+  <span class="muted">Built as a four-cabinet online arcade. No accounts, no trackers, no cookies.</span>
+  <span class="grow"></span>
+  <a class="btn ghost sm" href="./play.html?game=snake&amp;mode=solo">Play offline-safe solo</a>
+</footer>
+
+<script>
+  // On Pages (or a fork of it) the repo button should point at wherever this copy lives,
+  // and the note should explain what is live without the Node server.
+  try {
+    var host = location.hostname || '';
+    if (host.indexOf('github.io') > -1) {
+      var note = document.getElementById('serverNote');
+      if (note) note.textContent = 'served from GitHub Pages - the four solo cabinets are live, online rooms need the Node server';
+      var owner = host.split('.')[0].replace(/\.localhost$/, '');
+      var link = document.getElementById('repoLink');
+      if (link && owner && owner !== 'www') link.href = 'https://github.com/' + owner + '/' + location.pathname.split('/')[1];
+    }
+  } catch (e) {}
+</script>
+<script type="module" src="./js/lobby.js"></script>
+</body>
+</html>

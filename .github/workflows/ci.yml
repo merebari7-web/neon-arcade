@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node: ['20', '22']
+    name: node ${{ matrix.node }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: unit + multiplayer integration + client smoke
+        run: npm test
+      - name: boot the server and hit /health
+        run: |
+          PORT=3999 node server/index.js &
+          sleep 2
+          curl -fsS http://127.0.0.1:3999/health
+          curl -fsS http://127.0.0.1:3999/api/info | head -c 400
