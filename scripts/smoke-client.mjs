@@ -86,10 +86,15 @@ async function bootPage({ page, search = '' }) {
     // the documented override hook the client itself reads
     win.ARCADE_WS = serverUrl;
   }
+  // Assigning globalThis.x would throw where the property already exists as a
+  // getter-only accessor: Node >=21 ships a real globalThis.navigator, and this
+  // file is an ES module, so plain assignment is strict-mode assignment.
   const saved = new Map();
   for (const [k, v] of Object.entries(globals)) {
-    saved.set(k, globalThis[k]);
-    globalThis[k] = v;
+    const before = Object.getOwnPropertyDescriptor(globalThis, k);
+    saved.set(k, before);
+    if (before && !before.configurable) continue; // hostile host global: leave it alone
+    Object.defineProperty(globalThis, k, { value: v, writable: true, configurable: true });
   }
   // a real <canvas> needs a size, jsdom gives 0
   win.addEventListener('error', (e) => problems.push(`window error: ${e.message}`));
@@ -102,7 +107,9 @@ async function bootPage({ page, search = '' }) {
     ctx,
     problems,
     restore() {
-      for (const [k, v] of saved) globalThis[k] = v;
+      for (const [k, d] of saved) {
+        if (d) { try { Object.defineProperty(globalThis, k, d); } catch { /* read-only host global */ } } else { delete globalThis[k]; }
+      }
     },
     async loadModule(rel) {
       const url = pathToFileURL(path.join(publicDir, rel)).href;
