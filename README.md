@@ -154,7 +154,23 @@ tests/hub.test.js       REAL server + REAL WebSockets: static files, room codes,
                         leaderboard persistence, flood disconnect
 tests/client.test.js    boots public/js/play.js and lobby.js in jsdom with a stub canvas and
                         asserts each cabinet renders, animates and reacts to keys/clicks
+tests/visual.test.js    real Chromium: arena geometry, painted pixels, tile layout, sideways
+                        overflow on a phone viewport - the things jsdom has no layout for
 ```
+
+```bash
+npm test                  # 82 checks; the browser file skips itself if Chromium is absent
+npm run test:visual       # browser checks only, VISUAL_STRICT=1 in CI so a skip cannot pass
+npm run smoke             # the jsdom client harness against a live server, per scenario
+```
+
+`test:visual` needs `npx playwright install chromium`. It is skipped (not failed) when no
+browser is available, and fails loudly under `VISUAL_STRICT=1` so CI can never satisfy
+itself with a wall of skips. It exists because of a real bug: `overlay()` used to clear
+the arena it was painting into, so the moment a rival took their turn the Memory board was
+destroyed and never came back. Every jsdom check still passed - the DOM nodes were simply
+gone - and only a browser could see that the arena had collapsed to the height of its
+border.
 
 ## Adding a fifth cabinet
 

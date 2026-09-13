@@ -163,6 +163,19 @@ async function runSolo(game) {
   check(`${game}: still alive after input`, app.ctx.__rec.calls > 0 || !!doc.querySelector('.mcard, .tile4'));
   check(`${game}: no errors after input`, app.problems.filter((p) => p.startsWith('error')).length === 0, app.problems.join(' / ').slice(0, 400));
 
+  // Regression guard: overlay() used to do root.innerHTML = '', which destroyed the
+  // arena's canvas / DOM board. Assert the board survives both directions.
+  {
+    const ui = await app.loadModule('js/ui.js');
+    const arena = doc.querySelector('#arena');
+    const boardSel = '#arena canvas, #arena .grid-cards, #arena .grid4';
+    ui.overlay(arena, { title: 'probe', sub: 'overlay must not remove the board' });
+    check(`${game}: board survives overlay()`, !!arena.querySelector(boardSel), arena.innerHTML.slice(0, 140));
+    ui.clearOverlay(arena);
+    check(`${game}: board survives clearOverlay()`, !!arena.querySelector(boardSel), arena.innerHTML.slice(0, 140));
+    check(`${game}: no stray overlay layer left`, !arena.querySelector('.overlay, .overlay-layer:empty, .overlay-layer > *'), 'overlay node survived clearOverlay');
+  }
+
   if (game === 'memory') {
     const cards = [...doc.querySelectorAll('.mcard')];
     check('memory: 16 tiles rendered', cards.length === 16, `saw ${cards.length}`);
@@ -171,6 +184,25 @@ async function runSolo(game) {
     enabled[0]?.dispatchEvent(new app.win.Event('click', { bubbles: true }));
     await app.tick(160);
     check('memory: flip shows the face', !!doc.querySelector('.mcard.up'), 'no .up tile after clicking');
+
+    // The turn only passes after two flips, so find a second tile with a different face.
+    const state = () => app.win.__memoryTestSnap?.();
+    const all = [...doc.querySelectorAll('.mcard')];
+    const firstUp = all.findIndex((c) => c.classList.contains('up'));
+    const other = all.find((c, i) => i !== firstUp && !c.classList.contains('up') && !c.classList.contains('gone'));
+    other?.dispatchEvent(new app.win.Event('click', { bubbles: true }));
+    // let the resolution timer and the CPU's turn run: this is where the board used to vanish
+    let sawWait = false;
+    for (let i = 0; i < 40 && !sawWait; i++) {
+      await app.tick(120);
+      sawWait = !!doc.querySelector('.overlay.wait');
+    }
+    const live = doc.querySelectorAll('.mcard').length;
+    check('memory: rival turn shows a banner, not a curtain', sawWait || live === 16, `wait overlay=${sawWait}, cards=${live}`);
+    check('memory: 16 tiles still in the DOM during the rival turn', live === 16, `saw ${live}`);
+    const vis = [...doc.querySelectorAll('.mcard')].every((c) => c.isConnected);
+    check('memory: tiles stay attached to the arena', vis);
+    void state;
   }
   if (game === 'breakout') {
     check('breakout: wall counter renders', /^\d+\/\d+$/.test(app.text('#hudBricks') || ''), app.text('#hudBricks'));

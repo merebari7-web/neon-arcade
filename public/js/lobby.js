@@ -37,6 +37,7 @@ session.on('status', ({ status }) => {
   else if (status === 'connecting') note.textContent = 'connecting to the arcade server…';
   else note.textContent = 'no arcade server: online rooms are paused, but every solo cabinet still works';
   for (const btn of document.querySelectorAll('[data-needs-server]')) btn.disabled = status !== 'online';
+  if (status === 'offline') paintOfflineStats();
 });
 
 session.on('err', (m) => toast(m.m, 'bad'));
@@ -59,6 +60,21 @@ session.on('chat', (m) => {
 });
 
 const nameOf = (id) => NAMES[id] || id;
+
+// With no server there is nothing to count, and a row of dashes reads as a bug. Say
+// what is true, and still show the one number we do own: the local 2048 best.
+function paintOfflineStats() {
+  const set = (id, v) => {
+    const n = $(id);
+    if (n) n.textContent = v;
+  };
+  for (const id of ['#stOnline', '#stRooms', '#stMatches']) set(id, 'offline');
+  set('#footOnline', 'offline');
+  const best = store.get('na.best.g2048', 0);
+  set('#stBest', best ? fmtNum(best) : '0');
+  const note = $('#boardNote');
+  if (note) note.textContent = 'server board · offline';
+}
 
 function paintStats(stats) {
   if (!stats) return;

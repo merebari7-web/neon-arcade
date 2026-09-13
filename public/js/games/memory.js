@@ -63,7 +63,9 @@ export function mount({ arena, session } = {}) {
   function paintWaiting() {
     if (arena.querySelector('.overlay')) return;
     const who = snap?.players.find((p) => p.id === snap.turn);
+    // a banner, not a curtain: the whole point of the rival's turn is to watch it
     const box = overlay(arena, {
+      banner: true,
       title: `${who?.n || 'Rival'}'s turn`,
       sub: 'Watch the tiles - every card they flip is information you get for free.',
     });

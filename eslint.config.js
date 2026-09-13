@@ -33,4 +33,10 @@ export default [
     files: ['server/**/*.js', 'scripts/**/*.js', 'tests/**/*.js', 'eslint.config.js'],
     languageOptions: { ...shared.languageOptions, globals: { ...globals.node } },
   },
+  {
+    // the browser test ships callbacks that run inside the page, so it sees both worlds
+    ...shared,
+    files: ['tests/visual.test.js'],
+    languageOptions: { ...shared.languageOptions, globals: { ...globals.node, ...globals.browser } },
+  },
 ];

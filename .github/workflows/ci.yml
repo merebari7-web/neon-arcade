@@ -30,3 +30,19 @@ jobs:
           sleep 2
           curl -fsS http://127.0.0.1:3999/health
           curl -fsS http://127.0.0.1:3999/api/info | head -c 400
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    name: browser layout
+    env:
+      VISUAL_STRICT: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: real-browser geometry, clipping and console checks
+        run: npm run test:visual

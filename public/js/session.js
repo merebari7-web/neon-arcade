@@ -400,10 +400,16 @@ export class Session extends Emitter {
 
 export function wsUrl() {
   if (typeof location === 'undefined') return null;
-  if (location.protocol === 'file:') return null;
-  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  // An explicit server always wins, so a Pages front end can still be wired to a
+  // faraway arcade: set window.ARCADE_WS = 'wss://your-host/ws' before this runs.
   const forced = typeof window !== 'undefined' ? window.ARCADE_WS : null;
   if (forced) return forced;
+  if (location.protocol === 'file:') return null;
+  // GitHub Pages only serves the static bundle: dialling /ws there cannot work, and
+  // the handshake 404 is a red console error for every visitor. Treat the host as
+  // "no server" instead, which is the path the UI already labels as offline.
+  if (/\.github\.io$/.test(location.hostname)) return null;
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${proto}//${location.host}/ws`;
 }
 

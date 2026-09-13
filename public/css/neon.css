@@ -710,9 +710,16 @@ body.touch .arena .touch-pad {
   color: var(--ink);
   font-size: 17px;
 }
+.overlay-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none; /* so a lone banner never eats arena clicks */
+}
 .overlay {
   position: absolute;
   inset: 0;
+  pointer-events: auto;
   display: grid;
   place-items: center;
   gap: 10px;
@@ -745,6 +752,35 @@ body.touch .arena .touch-pad {
   flex-wrap: wrap;
   justify-content: center;
   margin: 6px 0 2px;
+}
+/* a banner is a strip, not a curtain: the board stays visible under it */
+.overlay.banner {
+  inset: auto 10px 10px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border: 1px solid var(--line2);
+  border-radius: 999px;
+  background: rgba(4, 2, 10, 0.78);
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+  text-align: left;
+  gap: 14px;
+}
+.overlay.banner .big {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: var(--yl);
+  text-shadow: 0 0 14px rgba(255, 230, 0, 0.45);
+  white-space: nowrap;
+}
+.overlay.banner p {
+  font-size: 11px;
+  color: var(--dim);
+  max-width: none;
 }
 .hud {
   display: flex;

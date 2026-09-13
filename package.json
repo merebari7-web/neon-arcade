@@ -8,7 +8,9 @@
     "smoke": "node scripts/smoke-all.mjs",
     "lint": "eslint .",
     "test:integration": "node --test tests/hub.test.js tests/client.test.js",
-    "test:unit": "node --test tests/snake.test.js tests/breakout.test.js tests/memory.test.js tests/g2048.test.js tests/bots.test.js"
+    "test:unit": "node --test tests/snake.test.js tests/breakout.test.js tests/memory.test.js tests/g2048.test.js tests/bots.test.js",
+    "test:visual": "node --test tests/visual.test.js",
+    "test:all": "node --test tests/*.test.js && node scripts/smoke-all.mjs"
   },
   "keywords": [
     "games",
@@ -32,7 +34,8 @@
   "devDependencies": {
     "eslint": "^9.39.5",
     "globals": "^17.12.0",
-    "jsdom": "^29.1.1"
+    "jsdom": "^29.1.1",
+    "playwright": "^1.55.0"
   },
   "overrides": {
     "qs": "^6.16.0"

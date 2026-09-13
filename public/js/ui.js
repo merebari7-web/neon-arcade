@@ -225,10 +225,22 @@ export function renderRoster(root, players, { pid, turnId, game } = {}) {
 }
 
 // ---------------------------------------------------------------------------
+// Overlays live in a layer of their own, never in the host directly. The host is
+// the arena that holds the cabinet's canvas or DOM board, and clearing it to show
+// a "waiting" card used to destroy the board - a canvas is not re-created by the
+// renderer, and the memory board never came back after the rival's turn.
+function overlayLayer(root) {
+  for (const child of root.children) if (child.classList?.contains('overlay-layer')) return child;
+  const layer = el('div', { class: 'overlay-layer' });
+  root.append(layer);
+  return layer;
+}
+
 export function overlay(root, opts = {}) {
   if (!root) return null;
-  root.innerHTML = '';
-  const box = el('div', { class: 'overlay' });
+  const layer = overlayLayer(root);
+  layer.innerHTML = '';
+  const box = el('div', { class: `overlay${opts.banner ? ' banner' : ''}` });
   box.append(el('h2', { class: `big ${opts.kind === 'lose' ? 'mg' : ''}`, text: opts.title || '' }));
   if (opts.sub) box.append(el('p', { text: opts.sub }));
   if (opts.rows?.length) {
@@ -254,7 +266,7 @@ export function overlay(root, opts = {}) {
   }
   if (row.children.length) box.append(row);
   if (opts.countdown != null) box.append(el('div', { class: 'tiny muted', text: opts.countdown, 'data-countdown': '' }));
-  root.append(box);
+  layer.append(box);
   box.countdown = (text) => {
     const node = box.querySelector('[data-countdown]');
     if (node) node.textContent = text;
@@ -263,8 +275,10 @@ export function overlay(root, opts = {}) {
   return box;
 }
 export function clearOverlay(root) {
-  const o = root?.querySelector('.overlay');
-  if (o) o.remove();
+  if (!root) return;
+  for (const o of [...root.querySelectorAll('.overlay')]) o.remove();
+  const layer = overlayLayer(root);
+  if (!layer.children.length) layer.remove(); // do not leave an empty click blocker behind
 }
 
 // ---------------------------------------------------------------------------
