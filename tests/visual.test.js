@@ -136,6 +136,17 @@ describe('browser layout', { skip: blocked || false }, () => {
         );
 
         assert.ok(geo.arena.h >= 260, `arena collapsed to ${geo.arena.h}px (scrollHeight ${geo.scrollH})`);
+        if (game === 'memory') {
+          // the whole board, and the turn banner inside it, must be on one screen
+          const fits = await page.evaluate(() => {
+            const r = document.querySelector('#arena').getBoundingClientRect();
+            return { bottom: Math.round(r.bottom), vh: window.innerHeight };
+          });
+          assert.ok(
+            fits.bottom <= fits.vh,
+            `board runs past the fold: arena bottom ${fits.bottom}px on a ${fits.vh}px viewport - flips and the turn banner would be off screen`
+          );
+        }
         assert.ok(!geo.clipped, `content overflows a clipped arena: ${geo.arena.h}px tall, ${geo.scrollH}px of content`);
         if (game === 'memory') {
           assert.equal(geo.over.length, 16, `expected 16 tiles, saw ${geo.over.length}`);
@@ -206,6 +217,22 @@ describe('browser layout', { skip: blocked || false }, () => {
       assert.equal(after.visible, 16, `only ${after.visible}/16 tiles are actually laid out inside the arena`);
       assert.ok(after.arenaH >= 260, `arena collapsed to ${after.arenaH}px`);
       assert.ok(!after.bannerIsCurtain, 'the turn banner covers most of the arena instead of sitting as a strip');
+      const onscreen = await page.evaluate(() => {
+        const b = document.querySelector('.overlay.wait')?.getBoundingClientRect();
+        return b ? { top: Math.round(b.top), bottom: Math.round(b.bottom), vh: window.innerHeight } : null;
+      });
+      if (onscreen) {
+        assert.ok(onscreen.bottom <= onscreen.vh, `turn banner is below the fold (${onscreen.bottom}px > ${onscreen.vh}px)`);
+        assert.ok(onscreen.top >= 0, `turn banner is above the fold (${onscreen.top}px)`);
+        const clash = await page.evaluate(() => {
+          const b = document.querySelector('.overlay.wait')?.getBoundingClientRect();
+          if (!b) return null;
+          return [...document.querySelectorAll('.mcard')]
+            .map((c) => c.getBoundingClientRect())
+            .filter((r) => r.bottom > b.top + 2 && r.top < b.bottom - 2 && r.right > b.left + 2 && r.left < b.right - 2).length;
+        });
+        assert.equal(clash || 0, 0, 'the turn banner sits on top of board tiles');
+      }
     } finally {
       await page.close();
     }

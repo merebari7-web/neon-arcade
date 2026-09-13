@@ -903,16 +903,27 @@ body.touch .arena .touch-pad {
   margin: 0;
 }
 /* board games (memory / 2048) render as DOM grids inside .arena */
+/* A memory board has to be seen all at once: the rival's flips are the information
+   you are supposed to watch, and a banner you have to scroll to is not a banner.
+   Size the square to the viewport, then let the cells fill it. */
 .grid-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
   gap: 10px;
-  padding: 16px;
+  padding: 14px;
+  width: min(100%, calc(100vh - 300px));
+  min-width: min(100%, 280px);
+  aspect-ratio: 1;
+  /* the turn banner lives at the bottom of the arena: reserve its strip so it never
+     sits on the last row, and the board does not jump when it appears */
+  margin: 0 auto 52px;
   background: #04020a;
 }
 .mcard {
   position: relative;
-  aspect-ratio: 1;
+  height: 100%;
+  min-height: 0;
   border: 1px solid var(--line2);
   border-radius: 12px;
   background: linear-gradient(150deg, rgba(34, 230, 255, 0.12), rgba(255, 43, 209, 0.08));
@@ -940,7 +951,7 @@ body.touch .arena .touch-pad {
 }
 .mcard .q {
   color: rgba(233, 247, 255, 0.22);
-  font-size: 20px;
+  font-size: clamp(15px, 1.6vw, 22px);
 }
 .grid4 {
   display: grid;
